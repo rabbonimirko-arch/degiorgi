@@ -6,35 +6,127 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>LiveAvatar</title>
+    <title>De Giorgi • LiveAvatar</title>
+
     <style>
+        :root {
+            --bg: #050505;
+            --gold: #c7a96b;
+            --gold-soft: rgba(199, 169, 107, .28);
+            --white: #f4f1eb;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         html, body {
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background: #000000;
+            background: var(--bg);
             position: fixed;
             touch-action: manipulation;
-            -webkit-overflow-scrolling: none;
             overscroll-behavior: none;
+            font-family: Georgia, "Times New Roman", serif;
         }
-        
+
         .stage {
             position: fixed;
             inset: 0;
             width: 100vw;
             height: 100vh;
             height: 100dvh;
-            background: #000000;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 72% 42%, rgba(199,169,107,.08), transparent 30%),
+                linear-gradient(120deg, #030303 0%, #090909 52%, #030303 100%);
+            isolation: isolate;
+        }
+
+        /* Sfondo De Giorgi: rimane dietro al player LiveAvatar */
+        .brand-background {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .brand-background::before {
+            content: "";
+            position: absolute;
+            left: -9vw;
+            bottom: 8vh;
+            width: 82vw;
+            height: 24vh;
+            border-top: 1px solid var(--gold-soft);
+            transform: perspective(900px) rotateY(18deg) rotateZ(-2deg);
+            transform-origin: left center;
+            box-shadow: 0 -18px 65px rgba(199,169,107,.08);
+        }
+
+        .brand-mark {
+            position: absolute;
+            left: clamp(24px, 5vw, 90px);
+            top: 50%;
+            transform: translateY(-50%) perspective(800px) rotateY(16deg);
+            transform-origin: left center;
+            color: var(--white);
+            text-align: left;
+            opacity: .95;
+            filter: drop-shadow(0 0 18px rgba(199,169,107,.16));
+        }
+
+        .brand-monogram {
+            font-size: clamp(64px, 9vw, 150px);
+            line-height: .85;
+            letter-spacing: -0.08em;
+            color: var(--gold);
+        }
+
+        .brand-name {
+            margin-top: 18px;
+            font-size: clamp(24px, 3.2vw, 54px);
+            letter-spacing: .20em;
+            white-space: nowrap;
+        }
+
+        .brand-subtitle {
+            margin-top: 10px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: clamp(9px, 1vw, 15px);
+            letter-spacing: .34em;
+            text-transform: uppercase;
+            color: rgba(244,241,235,.55);
+        }
+
+        .vertical-lines {
+            position: absolute;
+            right: 4vw;
+            top: 10vh;
+            width: min(25vw, 330px);
+            height: 80vh;
+            opacity: .26;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent 0 16px,
+                rgba(199,169,107,.42) 17px 18px
+            );
+            transform: perspective(800px) rotateY(-10deg);
+            transform-origin: right center;
+            mask-image: linear-gradient(to bottom, transparent, #000 20%, #000 80%, transparent);
+        }
+
+        .avatar-shell {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
             overflow: hidden;
         }
-        
+
         iframe {
             position: absolute;
             top: 50%;
@@ -46,8 +138,31 @@
             min-height: 56.25vw;
             transform: translate(-50%, -50%);
             border: none;
-            background: #000000;
-            filter: none;
+            background: transparent;
+        }
+
+        /* Cornice discreta per integrare meglio il player */
+        .vignette {
+            position: absolute;
+            inset: 0;
+            z-index: 3;
+            pointer-events: none;
+            background:
+                linear-gradient(90deg, rgba(0,0,0,.28), transparent 22%, transparent 78%, rgba(0,0,0,.22)),
+                linear-gradient(180deg, rgba(0,0,0,.10), transparent 20%, transparent 80%, rgba(0,0,0,.16));
+        }
+
+        .corner-brand {
+            position: absolute;
+            left: 22px;
+            bottom: max(18px, env(safe-area-inset-bottom));
+            z-index: 4;
+            color: rgba(244,241,235,.82);
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 10px;
+            letter-spacing: .26em;
+            text-transform: uppercase;
+            pointer-events: none;
         }
 
         @media (min-aspect-ratio: 16/9) {
@@ -58,16 +173,67 @@
                 min-height: auto;
             }
         }
+
+        @media (max-width: 760px) {
+            .brand-mark {
+                left: 18px;
+                top: 18%;
+                transform: perspective(700px) rotateY(12deg);
+                opacity: .68;
+            }
+
+            .brand-subtitle {
+                display: none;
+            }
+
+            .vertical-lines {
+                opacity: .12;
+            }
+        }
     </style>
 </head>
+
 <body>
     <main class="stage">
-        <iframe 
-            src="https://embed.liveavatar.com/v1/d16d1c61-234d-4c35-a171-3af7b0814e1e" 
-            allow="microphone; camera; autoplay; fullscreen" 
-            style="aspect-ratio: 9/16;
-            title="Fitness & Beauty">
-        </iframe>
+        <div class="brand-background" aria-hidden="true">
+            <div class="brand-mark">
+                <div class="brand-monogram">DG</div>
+                <div class="brand-name">DE GIORGI</div>
+                <div class="brand-subtitle">Fitness &amp; Beauty</div>
+            </div>
+            <div class="vertical-lines"></div>
+        </div>
+
+        <div class="avatar-shell">
+            <iframe
+                id="liveavatar-frame"
+                src="https://embed.liveavatar.com/v1/d16d1c61-234d-4c35-a171-3af7b0814e1e"
+                allow="microphone; camera; autoplay; fullscreen"
+                allowfullscreen
+                title="De Giorgi LiveAvatar">
+            </iframe>
+        </div>
+
+        <div class="vignette" aria-hidden="true"></div>
+        <div class="corner-brand">De Giorgi • Interactive Assistant</div>
     </main>
+
+    <script>
+        /*
+         * IMPORTANTE
+         * La vecchia URL conteneva: ?9?background=000000
+         * ed è stata corretta.
+         *
+         * Se il flusso LiveAvatar mostra uno sfondo verde DOPO l'avvio,
+         * quel verde è generato all'interno del video/iframe remoto.
+         * Il CSS di questa pagina non può fare chroma-key sui pixel
+         * contenuti in un iframe cross-origin.
+         *
+         * Questa pagina è però già strutturata con uno sfondo De Giorgi
+         * separato, così in futuro è possibile sostituire l'iframe con
+         * un elemento <video>/<canvas> gestito tramite LiveAvatar WebRTC SDK
+         * e applicare il chroma key verde lato client.
+         */
+    </script>
 </body>
 </html>
